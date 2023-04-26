@@ -5,6 +5,8 @@ env/
 cache/
 .mypy_cache
 .pytest_cache
+.python-version
+*.egg-info
 
 # IDE
 .idea
