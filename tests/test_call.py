@@ -43,12 +43,3 @@ def test_call_with_predefined_args_async():
 
 def test_call_threading():
     Parallel(4,'threading')(delayed(Call(CHAI, 'name()(string)', [['name', None]]))() for i in range(10))
-
-@pytest.mark.skip(reason="upgraded web3")
-def test_call_multiprocessing():
-    # NOTE can't have middlewares for multiprocessing
-    web3.provider.middlewares = tuple()
-    web3.middleware_onion.clear()
-    # TODO figure out why multiprocessing fails if you don't call request_func here
-    web3.provider.request_func(web3, web3.middleware_onion)
-    Parallel(4,'multiprocessing')(delayed(Call(CHAI, 'name()(string)', [['name', None]], _w3=web3))() for i in range(10))

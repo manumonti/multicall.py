@@ -109,26 +109,3 @@ def test_batcher_split_calls_odd():
     assert sum(len(batch) for batch in split) == len(calls)
     assert len(split[0]) == 14_999
     assert len(split[1]) == 15_000
-
-@pytest.mark.skip(reason="long running")
-def test_batcher_step_down_and_retry():
-    batcher.step = 100_000
-    calls = [Call(CHAI, 'totalSupply()(uint)', [[f'totalSupply{i}',None]]) for i in range(100_000)]
-    results = Multicall(calls)()
-    assert batcher.step < 100_000
-    assert len(results) == len(calls)
-
-@pytest.mark.skip(reason="upgrade web3")
-def test_multicall_threading():
-    calls = [Call(CHAI, 'totalSupply()(uint)', [[f'totalSupply{i}',None]]) for i in range(50_000)]
-    Parallel(4,'threading')(delayed(Multicall(batch))() for batch in batcher.batch_calls(calls, batcher.step))
-
-@pytest.mark.skip(reason="upgraded web3")
-def test_multicall_multiprocessing():
-    # NOTE can't have middlewares for multiprocessing
-    web3.provider.middlewares = tuple()
-    web3.middleware_onion.clear()
-    # TODO figure out why multiprocessing fails if you don't call request_func here
-    web3.provider.request_func(web3, web3.middleware_onion)
-    calls = [Call(CHAI, 'totalSupply()(uint)', [[f'totalSupply{i}',None]]) for i in range(50_000)]
-    Parallel(4,'multiprocessing')(delayed(Multicall(batch, _w3=web3))() for batch in batcher.batch_calls(calls, batcher.step))

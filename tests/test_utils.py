@@ -1,4 +1,3 @@
-
 import pytest
 from multicall.utils import *
 from web3.providers.async_base import AsyncBaseProvider
@@ -40,17 +39,6 @@ def test_gather():
 def test_gather_with_exception():
     with pytest.raises(UST):
         await_awaitable(gather([coro(),coro(),coro(),coro(),exception_coro()]))
-
-# def test_get_endpoint_brownie():
-#     assert get_endpoint(web3) == web3.provider.endpoint_uri
-
-# def test_get_endpoint_web3py():
-#     web3py_w3 = Web3(get_endpoint(web3))
-#     assert get_endpoint(web3py_w3) == web3.provider.endpoint_uri
-
-# @pytest.mark.skip(reason="no local endpoint setup")
-# def test_get_endpoint_web3py_auto():
-#     assert get_endpoint(Web3()) == 'http://localhost:8545'
 
 def test_get_async_w3_with_sync(w3):
     async_w3 = get_async_w3(w3)
