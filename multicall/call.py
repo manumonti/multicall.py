@@ -1,6 +1,5 @@
 from typing import Any, Callable, Iterable, List, Optional, Tuple, Union
 
-import eth_retry
 from eth_typing import Address, ChecksumAddress, HexAddress
 from eth_typing.abi import Decodable
 from eth_utils import to_checksum_address
@@ -84,7 +83,6 @@ class Call:
         else:
             return decoded if len(decoded) > 1 else decoded[0]
 
-    @eth_retry.auto_retry
     def __call__(self, args: Optional[Any] = None, _w3: Optional[Web3] = None) -> Any:
         _w3 = self.w3 or _w3 or w3
         args = prep_args(
@@ -101,7 +99,6 @@ class Call:
             self.returns,
         )
 
-    @eth_retry.auto_retry
     async def coroutine(self, args: Optional[Any] = None, _w3: Optional[Web3] = None) -> Any:
         _w3 = self.w3 or _w3 or w3
 
