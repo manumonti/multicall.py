@@ -10,12 +10,11 @@ description = "Aggregate results from multiple ethereum contract calls"
 keywords = ["ethereum", "web3", "nucypher"]
 requires-python = ">=3.8"
 dependencies = [
-  "web3 == 5.31.3",
+  "web3 == 6.*",
 ]
 
 [project.optional-dependencies]
 dev = [
   "pytest",
-  "eth-brownie",
   "joblib",
 ]
