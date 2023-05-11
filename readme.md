@@ -71,8 +71,13 @@ use `Multicall(...)()` to get the result of a prepared multicall.
 - AIOHTTP_TIMEOUT: sets aiohttp timeout period in seconds for async calls to node. Default: 30
 
 ## Tests
+It is necessary to declare environment variables with a .env file:
+
+```dotenv
+WEB3_PROVIDER_URI=https://mainnet.infura.io/v3/d5xxxxxxxxxxxxxxxxxxxxxxxxxxxxab
+```
+
 ```bash
 pip install -e ".[dev]"
-export WEB3_PROVIDER_URI=https://mainnet.infura.io/v3/daxxxxxxxxxxxxxxxxxxxx56
 pytest tests/
 ```
