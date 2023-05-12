@@ -8,7 +8,7 @@ from web3 import Web3
 
 from multicall import Call
 from multicall.constants import (GAS_LIMIT, MULTICALL2_ADDRESSES, MULTICALL2_BYTECODE,
-                                 MULTICALL3_BYTECODE, MULTICALL3_ADDRESSES, w3)
+                                 MULTICALL3_BYTECODE, MULTICALL3_ADDRESSES)
 from multicall.loggers import setup_logger
 from multicall.utils import (await_awaitable, chain_id, gather,
                              run_in_subprocess, state_override_supported)
@@ -31,12 +31,12 @@ def unpack_batch_results(batch_results: List[List[CallResponse]]) -> List[CallRe
 
 class Multicall:
     def __init__(
-        self, 
+        self,
         calls: List[Call],
-        block_id: Optional[int] = None, 
+        block_id: Optional[int] = None,
         require_success: bool = True,
         gas_limit: int = GAS_LIMIT,
-        _w3: Web3 = w3
+        _w3: Web3 = None # TODO: change the order since this should be an mandatory argument
     ) -> None:
         self.calls = calls
         self.block_id = block_id
@@ -60,7 +60,7 @@ class Multicall:
 
     async def coroutine(self) -> Dict[str,Any]:
         batches = await gather([
-            self.fetch_outputs(batch, id=str(i)) 
+            self.fetch_outputs(batch, id=str(i))
             for i,batch in enumerate(batcher.batch_calls(self.calls,batcher.step))
         ])
         outputs = await run_in_subprocess(unpack_batch_results, batches)
@@ -76,7 +76,7 @@ class Multicall:
 
         if calls is None:
             calls = self.calls
-        
+
         try:
             args = await run_in_subprocess(get_args, calls, self.require_success)
             if self.require_success is True:
@@ -92,13 +92,13 @@ class Multicall:
             return outputs
         except Exception as e:
             _raise_or_proceed(e, len(calls), ConnErr_retries=ConnErr_retries)
-        
+
         # Failed, we need to rebatch the calls and try again.
         batch_results = await gather([
             self.fetch_outputs(chunk, ConnErr_retries+1, f"{id}_{i}")
             for i, chunk in enumerate(await batcher.rebatch(calls))
         ])
-            
+
         return_val = await run_in_subprocess(unpack_batch_results,batch_results)
         logger.debug(f"coroutine {id} finished")
         return return_val
@@ -115,7 +115,7 @@ class Multicall:
                 gas_limit=self.gas_limit,
                 state_override_code=MULTICALL3_BYTECODE
             )
-        
+
         # If state override is not supported, we simply skip it.
         # This will mean you're unable to access full historical data on chains without state override support.
         return Call(
@@ -135,7 +135,7 @@ class NotSoBrightBatcher:
     """
     def __init__(self) -> None:
         self.step = 10000
-    
+
     def batch_calls(self, calls: List[Call], step: int) -> List[List[Call]]:
         '''
         Batch calls into chunks of size `self.step`.
@@ -149,7 +149,7 @@ class NotSoBrightBatcher:
             if end >= done:
                 return batches
             start = end
-        
+
     def split_calls(self, calls: List[Call], unused: None = None) -> Tuple[List[Call],List[Call]]:
         """
         Split calls into 2 batches in case request is too large.
@@ -159,12 +159,12 @@ class NotSoBrightBatcher:
         chunk_1 = calls[:center]
         chunk_2 = calls[center:]
         return chunk_1, chunk_2
-    
+
     async def rebatch(self, calls):
         # If a separate coroutine changed `step` after calls were last batched, we will use the new `step` for rebatching.
         if self.step <= len(calls) // 2:
             return await run_in_subprocess(self.batch_calls, calls, self.step)
-        
+
         # Otherwise we will split calls in half.
         if self.step >= len(calls):
             new_step = round(len(calls) * 0.99) if len(calls) >= 100 else len(calls) - 1

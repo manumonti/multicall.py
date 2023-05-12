@@ -27,46 +27,50 @@ def from_ray_require_success(success,val):
 def unpack_no_success(success: bool, output: Any) -> Tuple[bool,Any]:
     return (success, output)
 
-def test_multicall():
+def test_multicall(w3):
     multi = Multicall([
         Call(CHAI, 'totalSupply()(uint256)', [['supply', from_wei]]),
         Call(CHAI, ['balanceOf(address)(uint256)', CHAI], [['balance', from_ray]]),
-    ])
+    ],
+    _w3=w3)
     result = multi()
     print(result)
     assert isinstance(result['supply'], float)
     assert isinstance(result['balance'], float)
 
-def test_multicall_no_success():
+def test_multicall_no_success(w3):
     multi = Multicall(
         [
             Call(CHAI, 'transfer(address,uint256)(bool)', [['success', unpack_no_success]]), # lambda success, ret_flag: (success, ret_flag)
             Call(CHAI, ['balanceOf(address)(uint256)', CHAI], [['balance', unpack_no_success]]), # lambda success, value: (success, from_ray(value))
         ],
-        require_success=False
+        require_success=False,
+        _w3=w3
     )
     result = multi()
     print(result)
     assert isinstance(result['success'], tuple)
     assert isinstance(result['balance'], tuple)
 
-def test_multicall_async():
+def test_multicall_async(w3):
     multi = Multicall([
         Call(CHAI, 'totalSupply()(uint256)', [['supply', from_wei]]),
         Call(CHAI, ['balanceOf(address)(uint256)', CHAI], [['balance', from_ray]]),
-    ])
+    ],
+    _w3=w3)
     result = await_awaitable(multi.coroutine())
     print(result)
     assert isinstance(result['supply'], float)
     assert isinstance(result['balance'], float)
 
-def test_multicall_no_success_async():
+def test_multicall_no_success_async(w3):
     multi = Multicall(
         [
             Call(CHAI, 'transfer(address,uint256)(bool)', [['success', unpack_no_success]]),
             Call(CHAI, ['balanceOf(address)(uint256)', CHAI], [['balance', unpack_no_success]]),
         ],
-        require_success=False
+        require_success=False,
+        _w3=w3
     )
     result = await_awaitable(multi.coroutine())
     print(result)

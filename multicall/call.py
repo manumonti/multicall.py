@@ -7,7 +7,7 @@ from eth_utils import to_checksum_address
 from web3 import Web3
 
 from multicall import Signature
-from multicall.constants import Network, w3
+from multicall.constants import Network
 from multicall.exceptions import StateOverrideNotSupported
 from multicall.loggers import setup_logger
 from multicall.utils import (chain_id, get_async_w3, run_in_subprocess,
@@ -27,7 +27,7 @@ class Call:
         gas_limit: Optional[int] = None,
         state_override_code: Optional[str] = None,
         # This needs to be None in order to use process_pool_executor
-        _w3: Web3 = None
+        _w3: Web3 = None # TODO: change the order since this should be an mandatory argument
     ) -> None:
         self.target = to_checksum_address(target)
         self.returns = returns
@@ -86,7 +86,7 @@ class Call:
 
     @eth_retry.auto_retry
     def __call__(self, args: Optional[Any] = None, _w3: Optional[Web3] = None) -> Any:
-        _w3 = self.w3 or _w3 or w3
+        _w3 = self.w3 or _w3
         args = prep_args(
             self.target,
             self.signature,
@@ -103,7 +103,7 @@ class Call:
 
     @eth_retry.auto_retry
     async def coroutine(self, args: Optional[Any] = None, _w3: Optional[Web3] = None) -> Any:
-        _w3 = self.w3 or _w3 or w3
+        _w3 = self.w3 or _w3
 
         if self.state_override_code and not state_override_supported(_w3):
             raise StateOverrideNotSupported(f'State override is not supported on {Network(chain_id(_w3)).__repr__()[1:-1]}.')

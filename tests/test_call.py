@@ -11,35 +11,35 @@ def from_wei(value):
     return value / 1e18
 
 
-def test_call():
-    call = Call(CHAI, 'name()(string)', [['name', None]])
+def test_call(w3):
+    call = Call(CHAI, 'name()(string)', [['name', None]], _w3=w3)
     assert call() == {'name': 'Chai'}
 
 
-def test_call_with_args():
-    call = Call(CHAI, 'balanceOf(address)(uint256)', [['balance', from_wei]])
+def test_call_with_args(w3):
+    call = Call(CHAI, 'balanceOf(address)(uint256)', [['balance', from_wei]], _w3=w3)
     assert isinstance(call([CHAI])['balance'], float)
 
 
-def test_call_with_predefined_args():
-    call = Call(CHAI, ['balanceOf(address)(uint256)', CHAI], [['balance', from_wei]])
+def test_call_with_predefined_args(w3):
+    call = Call(CHAI, ['balanceOf(address)(uint256)', CHAI], [['balance', from_wei]], _w3=w3)
     assert isinstance(call()['balance'], float)
 
 
-def test_call_async():
-    call = Call(CHAI, 'name()(string)', [['name', None]])
+def test_call_async(w3):
+    call = Call(CHAI, 'name()(string)', [['name', None]], _w3=w3)
     assert await_awaitable(call.coroutine()) == {'name': 'Chai'}
 
 
-def test_call_with_args_async():
-    call = Call(CHAI, 'balanceOf(address)(uint256)', [['balance', from_wei]])
+def test_call_with_args_async(w3):
+    call = Call(CHAI, 'balanceOf(address)(uint256)', [['balance', from_wei]], _w3=w3)
     assert isinstance(await_awaitable(call.coroutine([CHAI]))['balance'], float)
 
 
-def test_call_with_predefined_args_async():
-    call = Call(CHAI, ['balanceOf(address)(uint256)', CHAI], [['balance', from_wei]])
+def test_call_with_predefined_args_async(w3):
+    call = Call(CHAI, ['balanceOf(address)(uint256)', CHAI], [['balance', from_wei]], _w3=w3)
     assert isinstance(await_awaitable(call.coroutine())['balance'], float)
 
 
-def test_call_threading():
-    Parallel(4,'threading')(delayed(Call(CHAI, 'name()(string)', [['name', None]]))() for i in range(10))
+def test_call_threading(w3):
+    Parallel(4,'threading')(delayed(Call(CHAI, 'name()(string)', [['name', None]], _w3=w3))() for i in range(10))
