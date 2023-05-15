@@ -1,5 +1,3 @@
-import pytest
-
 from joblib import Parallel, delayed
 from multicall import Call
 from multicall.utils import await_awaitable

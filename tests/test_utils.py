@@ -1,8 +1,6 @@
 import pytest
 from multicall.utils import *
 from web3.providers.async_base import AsyncBaseProvider
-from web3 import Web3
-
 
 class UST(Exception):
     pass

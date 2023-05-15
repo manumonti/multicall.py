@@ -1,5 +1,4 @@
 from typing import Any, Tuple
-import pytest
 
 from joblib import Parallel, delayed
 from multicall import Call, Multicall
