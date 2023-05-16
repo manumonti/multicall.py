@@ -3,7 +3,6 @@ import asyncio
 from concurrent.futures import ProcessPoolExecutor
 from typing import Any, Awaitable, Callable, Coroutine, Dict, Iterable
 
-import eth_retry
 from aiohttp import ClientTimeout
 from web3 import AsyncHTTPProvider, Web3
 from web3.eth import AsyncEth
@@ -13,7 +12,6 @@ from multicall.constants import AIOHTTP_TIMEOUT, NUM_PROCESSES, NO_STATE_OVERRID
 
 chainids: Dict[Web3,int] = {}
 
-@eth_retry.auto_retry
 def chain_id(w3: Web3) -> int:
     '''
     Returns chain id for an instance of Web3. Helps save repeat calls to node.
