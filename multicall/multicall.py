@@ -32,17 +32,17 @@ def unpack_batch_results(batch_results: List[List[CallResponse]]) -> List[CallRe
 class Multicall:
     def __init__(
         self,
+        _w3: Web3,
         calls: List[Call],
         block_id: Optional[int] = None,
         require_success: bool = True,
         gas_limit: int = GAS_LIMIT,
-        _w3: Web3 = None # TODO: change the order since this should be an mandatory argument
     ) -> None:
+        self.w3 = _w3
         self.calls = calls
         self.block_id = block_id
         self.require_success = require_success
         self.gas_limit = gas_limit
-        self.w3 = _w3
         self.chainid = chain_id(self.w3)
         if require_success is True:
             multicall_map = MULTICALL3_ADDRESSES if self.chainid in MULTICALL3_ADDRESSES else MULTICALL2_ADDRESSES

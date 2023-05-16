@@ -26,7 +26,7 @@ class Call:
         gas_limit: Optional[int] = None,
         state_override_code: Optional[str] = None,
         # This needs to be None in order to use process_pool_executor
-        _w3: Web3 = None # TODO: change the order since this should be an mandatory argument
+        _w3: Web3 = None
     ) -> None:
         self.target = to_checksum_address(target)
         self.returns = returns
