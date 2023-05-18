@@ -11,7 +11,11 @@ pip install multicall
 ## example
 
 ```python
+from web3 import Web3
 from multicall import Call, Multicall
+
+# web3 instance is required
+w3 = Web3()
 
 # assuming you are on kovan
 MKR_TOKEN = '0xaaf64bfcc32d0f15873a02163e7e500671a4ffcd'
@@ -21,19 +25,22 @@ MKR_FISH = '0x2dfcedcb401557354d0cf174876ab17bfd6f4efd'
 def from_wei(value):
     return value / 1e18
 
-multi = Multicall([
-    Call(MKR_TOKEN, ['balanceOf(address)(uint256)', MKR_WHALE], [('whale', from_wei)]),
-    Call(MKR_TOKEN, ['balanceOf(address)(uint256)', MKR_FISH], [('fish', from_wei)]),
-    Call(MKR_TOKEN, 'totalSupply()(uint256)', [('supply', from_wei)]),
-])
+multi = Multicall(
+    w3,
+    [
+        Call(MKR_TOKEN, ['balanceOf(address)(uint256)', MKR_WHALE], [('whale', from_wei)]),
+        Call(MKR_TOKEN, ['balanceOf(address)(uint256)', MKR_FISH], [('fish', from_wei)]),
+        Call(MKR_TOKEN, 'totalSupply()(uint256)', [('supply', from_wei)]),
+    ],
+)
 
 multi()  # {'whale': 566437.0921992733, 'fish': 7005.0, 'supply': 1000003.1220798912}
 
 # seth-style calls
-Call(MKR_TOKEN, ['balanceOf(address)(uint256)', MKR_WHALE])()
-Call(MKR_TOKEN, 'balanceOf(address)(uint256)')(MKR_WHALE)
+Call(MKR_TOKEN, ['balanceOf(address)(uint256)', MKR_WHALE], _w3=w3)()
+Call(MKR_TOKEN, 'balanceOf(address)(uint256)', _w3=w3)(MKR_WHALE)
 # return values processing
-Call(MKR_TOKEN, 'totalSupply()(uint256)', [('supply', from_wei)])()
+Call(MKR_TOKEN, 'totalSupply()(uint256)', [('supply', from_wei)], _w3=w3)()
 ```
 
 for a full example, see implementation of [daistats](https://github.com/banteg/multicall.py/blob/master/examples/daistats.py).
@@ -47,8 +54,9 @@ original [daistats.com](https://daistats.com) made by [nanexcool](https://github
 
 use `encode_data(args)` with input args to get the calldata. use `decode_data(output)` with the output to decode the result.
 
-### `Call(target, function, returns)`
+### `Call(target, function, returns, _w3=w3)`
 
+- `w3` is the instance of Web3
 - `target` is the `to` address which is supplied to `eth_call`.
 - `function` can be either seth-style signature of `method(input,types)(output,types)` or a list of `[signature, *args]`.
 - `returns` is a list of tuples of `(name, handler)` for return values. if `returns` argument is omitted, you get a tuple, otherwise you get a dict. to skip processing of a value, pass `None` as a handler.
@@ -57,8 +65,9 @@ use `Call(...)()` with predefined args or `Call(...)(args)` to reuse a prepared 
 
 use `decode_output(output)` with to decode the output and process it with `returns` handlers.
 
-### `Multicall(calls)`
+### `Multicall(w3, calls)`
 
+- `w3` is the instance of Web3
 - `calls` is a list of calls with prepared values.
 
 use `Multicall(...)()` to get the result of a prepared multicall.
