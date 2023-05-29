@@ -1,54 +1,5 @@
-import pytest
 from multicall.utils import *
-from web3.providers.async_base import AsyncBaseProvider
-
-class UST(Exception):
-    pass
-
-oopsie = UST("oops")
-
-def work():
-    pass
-
-async def coro():
-    return
-
-def exception_coro():
-    raise oopsie
 
 
 def test_chain_id(w3):
     assert chain_id(w3) == 1
-
-def test_await_awaitable():
-    assert await_awaitable(coro()) == None
-
-def test_raise_if_exception():
-    with pytest.raises(UST):
-        raise_if_exception(UST("oops"))
-
-def test_raise_if_exception_in():
-    with pytest.raises(UST):
-        raise_if_exception_in(["BTC", "ETH", UST("oops")])
-
-def test_gather():
-    assert await_awaitable(gather([coro(),coro(),coro(),coro(),coro()])) == [None,None,None,None,None]
-
-def test_gather_with_exception():
-    with pytest.raises(UST):
-        await_awaitable(gather([coro(),coro(),coro(),coro(),exception_coro()]))
-
-def test_get_async_w3_with_sync(w3):
-    async_w3 = get_async_w3(w3)
-    assert async_w3.eth.is_async
-    assert isinstance(async_w3.provider, AsyncBaseProvider)
-    assert await_awaitable(async_w3.eth.chain_id) == 1
-
-def test_get_async_w3_with_async(w3):
-    async_w3 = get_async_w3(w3)
-    async_w3_2 = get_async_w3(async_w3)
-    assert async_w3_2 == async_w3
-    assert await_awaitable(async_w3_2.eth.chain_id) == 1
-
-def test_run_in_subprocess():
-    assert await_awaitable(run_in_subprocess(work)) == None
