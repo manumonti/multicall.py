@@ -37,13 +37,13 @@ def unpack_batch_results(batch_results: List[List[CallResponse]]) -> List[CallRe
 class Multicall:
     def __init__(
         self,
-        _w3: Web3,
+        w3: Web3,
         calls: List[Call],
         block_id: Optional[int] = None,
         require_success: bool = True,
         gas_limit: int = GAS_LIMIT,
     ) -> None:
-        self.w3 = _w3
+        self.w3 = w3
         self.calls = calls
         self.block_id = block_id
         self.require_success = require_success
@@ -102,7 +102,7 @@ class Multicall:
                 self.multicall_address,
                 self.multicall_sig,
                 returns=None,
-                _w3=self.w3,
+                w3=self.w3,
                 block_id=self.block_id,
                 gas_limit=self.gas_limit,
                 state_override_code=MULTICALL3_BYTECODE,
@@ -114,7 +114,7 @@ class Multicall:
             self.multicall_address,
             self.multicall_sig,
             returns=None,
-            _w3=self.w3,
+            w3=self.w3,
             block_id=self.block_id,
             gas_limit=self.gas_limit,
         )

@@ -8,15 +8,15 @@ def from_wei(value):
 
 
 def test_call(w3):
-    call = Call(CHAI, 'name()(string)', [['name', None]], _w3=w3)
+    call = Call(CHAI, 'name()(string)', [['name', None]], w3=w3)
     assert call() == {'name': 'Chai'}
 
 
 def test_call_with_args(w3):
-    call = Call(CHAI, 'balanceOf(address)(uint256)', [['balance', from_wei]], _w3=w3)
+    call = Call(CHAI, 'balanceOf(address)(uint256)', [['balance', from_wei]], w3=w3)
     assert isinstance(call([CHAI])['balance'], float)
 
 
 def test_call_with_predefined_args(w3):
-    call = Call(CHAI, ['balanceOf(address)(uint256)', CHAI], [['balance', from_wei]], _w3=w3)
+    call = Call(CHAI, ['balanceOf(address)(uint256)', CHAI], [['balance', from_wei]], w3=w3)
     assert isinstance(call()['balance'], float)

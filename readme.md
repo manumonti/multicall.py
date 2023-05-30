@@ -37,10 +37,10 @@ multi = Multicall(
 multi()  # {'whale': 566437.0921992733, 'fish': 7005.0, 'supply': 1000003.1220798912}
 
 # seth-style calls
-Call(MKR_TOKEN, ['balanceOf(address)(uint256)', MKR_WHALE], _w3=w3)()
-Call(MKR_TOKEN, 'balanceOf(address)(uint256)', _w3=w3)(MKR_WHALE)
+Call(MKR_TOKEN, ['balanceOf(address)(uint256)', MKR_WHALE], w3=w3)()
+Call(MKR_TOKEN, 'balanceOf(address)(uint256)', w3=w3)(MKR_WHALE)
 # return values processing
-Call(MKR_TOKEN, 'totalSupply()(uint256)', [('supply', from_wei)], _w3=w3)()
+Call(MKR_TOKEN, 'totalSupply()(uint256)', [('supply', from_wei)], w3=w3)()
 ```
 
 for a full example, see implementation of [daistats](https://github.com/banteg/multicall.py/blob/master/examples/daistats.py).
@@ -54,7 +54,7 @@ original [daistats.com](https://daistats.com) made by [nanexcool](https://github
 
 use `encode_data(args)` with input args to get the calldata. use `decode_data(output)` with the output to decode the result.
 
-### `Call(target, function, returns, _w3=w3)`
+### `Call(target, function, returns, w3=w3)`
 
 - `w3` is the instance of Web3
 - `target` is the `to` address which is supplied to `eth_call`.

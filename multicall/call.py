@@ -23,15 +23,14 @@ class Call:
         block_id: Optional[int] = None,
         gas_limit: Optional[int] = None,
         state_override_code: Optional[str] = None,
-        # This needs to be None in order to use process_pool_executor
-        _w3: Web3 = None,
+        w3: Web3 = None,
     ) -> None:
         self.target = to_checksum_address(target)
         self.returns = returns
         self.block_id = block_id
         self.gas_limit = gas_limit
         self.state_override_code = state_override_code
-        self.w3 = _w3
+        self.w3 = w3
 
         self.args: Optional[List[Any]]
         if isinstance(function, list):
@@ -79,8 +78,8 @@ class Call:
         else:
             return decoded if len(decoded) > 1 else decoded[0]
 
-    def __call__(self, args: Optional[Any] = None, _w3: Optional[Web3] = None) -> Any:
-        _w3 = self.w3 or _w3
+    def __call__(self, args: Optional[Any] = None, w3: Optional[Web3] = None) -> Any:
+        _w3 = self.w3 or w3
         args = prep_args(
             self.target,
             self.signature,
