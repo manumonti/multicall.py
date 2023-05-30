@@ -5,7 +5,7 @@ python interface for makerdao's [multicall](https://github.com/makerdao/multical
 ## installation
 
 ```
-
+pip install git+https://github.com/nucypher/multicall.py
 ```
 
 ## example
