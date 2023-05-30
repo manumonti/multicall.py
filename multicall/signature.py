@@ -12,35 +12,36 @@ def parse_signature(signature: str) -> Tuple[str, List[TypeStr], List[TypeStr]]:
     stack: List[str] = []
     start: int = 0
     for end, character in enumerate(signature):
-        if character == '(':
+        if character == "(":
             stack.append(character)
             if not parts:
                 parts.append(signature[start:end])
                 start = end
-        if character == ')':
+        if character == ")":
             stack.pop()
             if not stack:  # we are only interested in outermost groups
-                parts.append(signature[start:end + 1])
+                parts.append(signature[start : end + 1])
                 start = end + 1
-    function = ''.join(parts[:2])
+    function = "".join(parts[:2])
     input_types = parse_typestring(parts[1])
     output_types = parse_typestring(parts[2])
     return function, input_types, output_types
+
 
 def parse_typestring(typestring: str) -> Optional[List[TypeStr]]:
     if typestring == "()":
         return []
     parts = []
-    part = ''
+    part = ""
     inside_tuples = 0
     for character in typestring[1:-1]:
         if character == "(":
             inside_tuples += 1
         elif character == ")":
             inside_tuples -= 1
-        elif character == ',' and inside_tuples == 0:
+        elif character == "," and inside_tuples == 0:
             parts.append(part)
-            part = ''
+            part = ""
             continue
         part += character
     parts.append(part)
