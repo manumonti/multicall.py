@@ -1,6 +1,6 @@
 __pycache__
-.vscode
 dist
+build/
 env/
 cache/
 .mypy_cache
@@ -11,3 +11,4 @@ cache/
 
 # IDE
 .idea
+.vscode
