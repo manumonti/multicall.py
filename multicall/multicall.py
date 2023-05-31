@@ -12,6 +12,7 @@ from multicall.constants import (
 )
 from multicall.loggers import setup_logger
 from multicall.utils import chain_id, state_override_supported
+from multicall.exceptions import InvalidChainID
 
 logger = setup_logger(__name__)
 
@@ -63,7 +64,10 @@ class Multicall:
                 else MULTICALL2_ADDRESSES
             )
             self.multicall_sig = "tryBlockAndAggregate(bool,(address,bytes)[])(uint256,uint256,(bool,bytes)[])"
-        self.multicall_address = multicall_map[self.chainid]
+        try:
+            self.multicall_address = multicall_map[self.chainid]
+        except KeyError:
+            raise InvalidChainID(f"No multicall contract found for chainId {self.chainid}")
 
     def __call__(self) -> Dict[str, Any]:
         start = time()

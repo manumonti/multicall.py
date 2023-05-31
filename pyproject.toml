@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "multicall"
-version = "0.0.1"
+version = "0.0.3"
 authors = [ {name = "banteg"}, {name = "manumonti"} ]
 description = "Aggregate results from multiple ethereum contract calls"
 keywords = ["ethereum", "web3", "nucypher"]
