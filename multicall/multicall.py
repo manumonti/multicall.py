@@ -67,7 +67,9 @@ class Multicall:
         try:
             self.multicall_address = multicall_map[self.chainid]
         except KeyError:
-            raise InvalidChainID(f"No multicall contract found for chainId {self.chainid}")
+            raise InvalidChainID(
+                f"No multicall contract found for chainId {self.chainid}"
+            )
 
     def __call__(self) -> Dict[str, Any]:
         start = time()
